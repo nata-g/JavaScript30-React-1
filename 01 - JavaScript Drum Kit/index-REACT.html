@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>JS Drum Kit</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/classnames@2.2.6/index.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js" crossorigin></script>
+</head>
+
+<body>
+  <div id="app"></div>
+
+  <script type="text/babel">
+    const sounds = [
+      [65, "A", "clap", new Audio("sounds/clap.wav")],
+      [83, "S", "hihat", new Audio("sounds/hihat.wav")],
+      [68, "D", "kick", new Audio("sounds/kick.wav")],
+      [70, "F", "openhat", new Audio("sounds/openhat.wav")],
+      [71, "G", "boom", new Audio("sounds/boom.wav")],
+      [72, "H", "ride", new Audio("sounds/ride.wav")],
+      [74, "J", "snare", new Audio("sounds/snare.wav")],
+      [75, "K", "tom", new Audio("sounds/tom.wav")],
+      [76, "L", "tink", new Audio("sounds/tink.wav")]
+    ]
+
+    class App extends React.Component {
+      componentDidMount() {
+        window.addEventListener('keydown', this.playsound)
+      }
+
+      playsound = ({ keyCode }) => {
+        const sound = sounds.find(sound =>  sound[0] === keyCode)
+        if (sound) {
+          const el = document.querySelector(`div[data-key="${keyCode}"]`)
+          el.classList.add("playing")
+          sound[3].currentTime = 0
+          sound[3].play()
+        }
+      }
+
+      removeTransition = e => {
+        e.target.classList.remove('playing');
+      }
+
+      render = () => (
+        <div className="keys">
+          {sounds.map(([keyCode, keyName, soundName, ...rest]) => (
+            <div className="key" key={keyCode} data-key={keyCode} onTransitionEnd={this.removeTransition}>
+              <kbd>{keyName}</kbd>
+              <span className="sound">{soundName}</span>
+            </div>
+          ))}
+        </div>
+      )
+    }
+
+    ReactDOM.render(<App />, document.getElementById('app'))
+  </script>
+</body>
+
+</html>
